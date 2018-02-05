@@ -1,4 +1,6 @@
 # BEGIN WordPress
+php_value upload_max_filesize 100M
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
