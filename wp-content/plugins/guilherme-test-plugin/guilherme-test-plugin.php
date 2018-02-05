@@ -212,7 +212,7 @@ class Guilherme_Test_Plugin_Class {
         if (!empty($image)) {
             $html .= '<p>';
             $html .= 'Current Image: <br/>';
-            $html .= sprintf('<img src="%s" width="150" />', $image['url']);
+            $html .= sprintf('<img src="%s" width="150" height="150" />', $image['url']);
             $html .= '</p>';
         }
 
@@ -308,10 +308,7 @@ class Guilherme_Test_Plugin_Class {
 
         if(in_array($uploaded_type, $supported_types)) {
 
-            $size = filesize($field_image['tmp_name']);
-            if (($size/1024) > 50) {
-                wp_die("The image size is bigger than 50kb.");
-            }
+            self::check_image_size($field_image);
 
             // Use the WordPress API to upload the file
             $upload = wp_upload_bits($field_image['name'], null, file_get_contents($field_image['tmp_name']));
@@ -328,6 +325,19 @@ class Guilherme_Test_Plugin_Class {
         } else {
             wp_die("The file type that you've uploaded is not a valid image.");
 
+        }
+    }
+
+    /**
+     * Check the image size
+     *
+     * @param $field_image
+     */
+    static function check_image_size($field_image)
+    {
+        $size = filesize($field_image['tmp_name']);
+        if (($size/1024) > 50) {
+            wp_die("The image size is bigger than 50kb.");
         }
     }
 
