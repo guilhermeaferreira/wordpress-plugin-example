@@ -1,6 +1,11 @@
 <?php
 /* Template Name: PageGuilhermeGalleryTest */
 
+// user needs to be logged to use that page
+if (get_current_user_id() === 0) {
+    wp_redirect( home_url() );
+}
+
 // Plugin directory
 require_once ABSPATH . 'wp-content/plugins/guilherme-test-plugin/guilherme-test-plugin.php';
 
@@ -31,6 +36,10 @@ if (isset($_POST['submit'])) {
         $errMgs[] = 'Visibility is required!';
     }
 
+    // validate the image size
+    $image = $_FILES['image'];
+    Guilherme_Test_Plugin_Class::check_image_size($image);
+
     // if we DO NOT have errors, save!
     if (!$errors) {
         $post = array(
@@ -41,7 +50,7 @@ if (isset($_POST['submit'])) {
         $post_id = wp_insert_post($post); // save the post
 
         if (is_int($post_id)) { // if the post was saved, add the extra items
-            Guilherme_Test_Plugin_Class::save_image($_FILES['image'], $post_id);
+            Guilherme_Test_Plugin_Class::save_image($image, $post_id);
             Guilherme_Test_Plugin_Class::save_visibility($_POST['visibility'], $post_id);
             wp_set_object_terms($post_id, $_POST['terms'], Guilherme_Test_Plugin_Class::POST_PREFIX . 'gallery_type');
         }
@@ -49,7 +58,6 @@ if (isset($_POST['submit'])) {
 }
 
 get_header();
-
 
 ?>
 
